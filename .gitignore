@@ -1,0 +1,5 @@
+__pycache__/
+Scripts/
+Lib/
+pyvenv.cfg
+tests.py
