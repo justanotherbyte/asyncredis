@@ -93,7 +93,7 @@ class Redis:
         :return: The encoded bytes (utf-8)
         :rtype: bytes
         """
-        no_args = not bool(len(args))
+        no_args = not args
         command = command.upper()
 
         if no_args:
