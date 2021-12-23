@@ -64,7 +64,7 @@ class Redis:
         if not success:
             host = self.connection.host
             port = self.connection.port
-            raise OSError(f"Failed to establish a socket connection after 5 retries to {host}:{port}")
+            raise IOError(f"Failed to establish a socket connection after 5 retries to {host}:{port}")
 
     async def close(self):
         """

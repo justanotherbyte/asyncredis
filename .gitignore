@@ -3,3 +3,6 @@ Scripts/
 Lib/
 pyvenv.cfg
 tests.py
+asyncredis.egg-info/
+build/
+dist/
