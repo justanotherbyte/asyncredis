@@ -4,7 +4,6 @@ from typing import Optional
 
 from .connection import RedisConnection
 from .encoders import (
-    _encode_simple_string,
     _encode_command_string,
     _encode_array,
     _encode_bulk_string,
@@ -83,7 +82,7 @@ class Redis:
             pass
         
 
-    def command(self, command: str, *args):
+    def command(self, command: str, *args) -> bytes:
         # we will construct an array if any args were provided
         # if any special options were provided such as EX, they will also be properly
         # encoded
@@ -124,6 +123,15 @@ class Redis:
         *,
         timeout: Optional[int] = None
     ):
+        """Set a key-value pair.
+
+        :param key: The key you want to set
+        :type key: str
+        :param value: The assosciated value you want to set
+        :type value: str
+        :param timeout: How many seconds before the key-value pair expires, defaults to None
+        :type timeout: Optional[int], optional
+        """
         args = []
         args.append(key)
         args.append(value)
@@ -137,9 +145,48 @@ class Redis:
         self.parser.parse_message(response)
 
     async def get(self, key: str) -> Optional[str]:
+        """Get a value from the Redis server with the associated key.
+
+        :param key: The associated key
+        :type key: str
+        :return: The value that was found, or None, if no value was found
+        :rtype: Optional[str]
+        """
         command = self.command("GET", key)
         response = await self.execute_command(command)
         parsed = self.parser.parse_message(response)
         return parsed
+
+    async def delete(self, *keys) -> int:
+        """Delete some keys.
+
+        :param keys: A consume-rest arg. You would pass it as so: `.delete("mykey", "mykey2", "mykey3")`
+        :return: The amount of keys that ended up being deleted
+        :rtype: int
+        """
+        command = self.command("DEL", *keys)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response)
+        return parsed
+
+    async def copy(
+        self,
+        existing_key: str,
+        new_key: str
+    ) -> bool:
+        """Copy the value of a key-value pair, into another pair.
+
+        :param existing_key: The key you want to copy from
+        :type existing_key: str
+        :param new_key: The name of the new key you want to copy to
+        :type new_key: str
+        :return: Whether the COPY was actually performed. Could return False
+        :rtype: bool
+        """
+        command = self.command("COPY", existing_key, new_key)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response)
+
+        return bool(parsed)
 
 
