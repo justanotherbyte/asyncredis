@@ -16,10 +16,12 @@ from .parser import RedisParser
 class Redis:
     def __init__(
         self,
-        connection: RedisConnection
+        connection: RedisConnection,
+        socket_read_size: int = 65536
     ):
         self.connection = connection
         self.parser = RedisParser("utf-8")
+        self.socket_read_size = socket_read_size
 
     @classmethod
     def from_url(cls, connection_uri: str):
@@ -65,6 +67,22 @@ class Redis:
             port = self.connection.port
             raise OSError(f"Failed to establish a socket connection after 5 retries to {host}:{port}")
 
+    async def close(self):
+        """
+        Ask the Redis server to close our connection, process any remaining responses, and cleanup.
+        """
+        quit_ = self.command("QUIT")
+        await self.execute_command(quit_)
+        # send the QUIT command to the Redis server. We don't handle a response here
+        # since we're closing and we want to close gracefully.
+        try:
+            await self.connection.socket_close()
+            # close the socket on our end once we send the QUIT command
+        except Exception:
+            # Ignore any errors that occur while closing the socket
+            pass
+        
+
     def command(self, command: str, *args):
         # we will construct an array if any args were provided
         # if any special options were provided such as EX, they will also be properly
@@ -90,14 +108,14 @@ class Redis:
                     parsed_arg = _encode_bulk_string(arg)
 
                 to_pass_args.append(parsed_arg)
-                
+
             command_string = _encode_array(to_pass_args)
 
         return command_string.encode("utf-8")
 
     async def execute_command(self, data: bytes):
         await self.connection.send_message(data)
-        return await self.connection.read_message(100)
+        return await self.connection.read_message(self.socket_read_size)
 
     async def set(
         self,
@@ -117,4 +135,11 @@ class Redis:
         command = self.command("SET", *args)
         response = await self.execute_command(command)
         self.parser.parse_message(response)
+
+    async def get(self, key: str) -> Optional[str]:
+        command = self.command("GET", key)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response)
+        return parsed
+
 

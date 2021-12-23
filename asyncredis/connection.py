@@ -48,3 +48,7 @@ class RedisConnection:
     async def read_message(self, n: int = -1):
         data = await self.reader.read(n)
         return data
+
+    async def readline(self):
+        data = await self.reader.readline()
+        return data
