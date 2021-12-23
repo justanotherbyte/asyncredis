@@ -189,4 +189,42 @@ class Redis:
 
         return bool(parsed)
 
+    async def dump(self, key: str) -> Optional[bytes]:
+        """Serialize the value stored at key in a Redis-specific format and return it to the user.
 
+        :param key: The associated key for the value you want to serialize
+        :type key: bytes
+        :return: The serialized value. Could return None if the key was not found, or if something went wrong
+        :rtype: Optional[bytes]
+        """
+        command = self.command("DUMP", key)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response, decode=False)
+        return parsed
+
+    async def exists(self, key: str) -> bool:
+        """Check whether a key exists.
+
+        :param key: The key to check
+        :type key: str
+        :return: Whether or not the key exists. True - Exists. False - Doesn't exist
+        :rtype: bool
+        """
+
+        command = self.command("EXISTS", key)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response)
+
+        return bool(parsed)
+
+    async def existsmany(self, *keys) -> int:
+        """Checks whether the provided keys exist and returns a number representing how many keys actually existed.
+
+        :param keys: A consume-rest arg. You would pass it as so: `.existsmany("mykey", "mykey2", "mykey3")`
+        :return: The amount of keys that existed compared to the ones you provided
+        :rtype: int
+        """
+        command = self.command("EXISTS", *keys)
+        response = await self.execute_command(command)
+        parsed = self.parser.parse_message(response)
+        return parsed
