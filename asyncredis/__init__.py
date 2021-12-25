@@ -3,3 +3,4 @@ __author__ = "justanotherbyte"
 
 from .redis import Redis
 from .connection import RedisConnection
+from .helpers import connect
