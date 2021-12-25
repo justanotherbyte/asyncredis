@@ -11,11 +11,6 @@ Welcome to asyncredis's documentation!
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: modules
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
