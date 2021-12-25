@@ -11,7 +11,7 @@ An asyncio compatible Redis driver. Just a pet-project.
 </sup>
 <br>
 <sup>
-    <!-- <a href="">Ubuntu host guide by Digital Ocean.</a> -->
+    <a href="https://asyncredis.readthedocs.io/en/latest/">Read the documentation.</a>
 </sup>
 </p>
 

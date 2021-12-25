@@ -15,6 +15,9 @@ class RedisConnection:
         self._open = False
     
     async def socket_connect(self):
+        """
+        Open a TCP socket connection to the Redis server.
+        """
         _ssl = None
         if self.using_ssl is True:
             ssl_ctx = ssl.create_default_context()
@@ -32,6 +35,9 @@ class RedisConnection:
         self._open = True
 
     async def socket_close(self):
+        """
+        Close the TCP socket connection, by closing the transport, and closing the writer.
+        """
         if self.writer:
             self.writer.transport.close()
             self.writer.close()
@@ -40,15 +46,23 @@ class RedisConnection:
         self._open = False
 
     async def send_message(self, blob: bytes):
+        """Send a blob of bytes to the Redis server.
+
+        :param blob: The bytes you want to send
+        :type blob: bytes
+        """
         self.writer.write(blob)
         await self.writer.drain() 
         # flush the writer out after the write
         # preparing it for the next write
 
-    async def read_message(self, n: int = -1):
-        data = await self.reader.read(n)
-        return data
+    async def read_message(self, n: int = -1) -> bytes:
+        """Read from the open IO stream.
 
-    async def readline(self):
-        data = await self.reader.readline()
+        :param n: The number of bytes to read, defaults to -1
+        :type n: int, optional
+        :return: The bytes read from the IO stream
+        :rtype: bytes
+        """
+        data = await self.reader.read(n)
         return data

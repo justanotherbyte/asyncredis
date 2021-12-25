@@ -14,6 +14,16 @@ class RedisParser:
         self._handle_errors = errors
 
     def parse_message(self, message: bytes, *, decode: bool = True) -> Union[str, bytes]:
+        """Parse a message that's been received from the Redis server.
+
+        :param message: The received message in bytes
+        :type message: bytes
+        :param decode: Whether or not the function should handle decoding the bytes after parsing, defaults to True
+        :type decode: bool, optional
+        :raises ValueError: When Incomplete data has been passed to the parser
+        :return: The parsed value
+        :rtype: Union[str, bytes]
+        """
         # we use hiredis since its a sane and correct redis protocol parser
         # also its very speedy
 

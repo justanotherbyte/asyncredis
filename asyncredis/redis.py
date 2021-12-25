@@ -13,6 +13,9 @@ from .parser import RedisParser
 
 
 class Redis:
+    """
+    A class representing a client interacting with a Redis server.
+    """
     def __init__(
         self,
         connection: RedisConnection,
@@ -24,6 +27,13 @@ class Redis:
 
     @classmethod
     def from_url(cls, connection_uri: str):
+        """Create a RedisConnection instance from a connection uri.
+
+        :param connection_uri: Your redis connection uri
+        :type connection_uri: str
+        :return: A Redis client instance
+        :rtype: Redis
+        """
         parsed = urlparse(connection_uri)
         netloc = parsed.netloc
         scheme = parsed.scheme
@@ -122,7 +132,7 @@ class Redis:
         value: str,
         *,
         timeout: Optional[int] = None
-    ):
+    ) -> Optional[str]:
         """Set a key-value pair.
 
         :param key: The key you want to set
@@ -131,6 +141,8 @@ class Redis:
         :type value: str
         :param timeout: How many seconds before the key-value pair expires, defaults to None
         :type timeout: Optional[int], optional
+        :return: The value returned by the Redis server. We parse the response, but we let you handle it for flexibility
+        :rtype: Optional[str]
         """
         args = []
         args.append(key)
@@ -142,7 +154,8 @@ class Redis:
 
         command = self.command("SET", *args)
         response = await self.execute_command(command)
-        self.parser.parse_message(response)
+        parsed = self.parser.parse_message(response)
+        return parsed
 
     async def get(self, key: str) -> Optional[str]:
         """Get a value from the Redis server with the associated key.

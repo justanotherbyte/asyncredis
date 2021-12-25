@@ -15,7 +15,7 @@ setup(
     url='https://github.com/justanotherbyte/asyncredis',
     version="0.3.0",
     packages=find_packages(),
-    license='MIT',
+    license='GNU',
     description='An asyncio compatible Redis driver. Just a pet-project.',
     long_description=readme,
     long_description_content_type='text/markdown',
