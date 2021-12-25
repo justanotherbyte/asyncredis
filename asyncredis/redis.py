@@ -122,7 +122,14 @@ class Redis:
 
         return command_string.encode("utf-8")
 
-    async def execute_command(self, data: bytes):
+    async def execute_command(self, data: bytes) -> bytes:
+        """Executes a bytes-encoded command by sending it to the Redis server.
+
+        :param data: The bytes-encoded version of the command string
+        :type data: bytes
+        :return: The bytes read from the IO stream after sending the message across
+        :rtype: bytes
+        """
         await self.connection.send_message(data)
         return await self.connection.read_message(self.socket_read_size)
 
