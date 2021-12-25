@@ -1,0 +1,3 @@
+sphinx
+furo
+asyncredis @ git+https://github.com/justanotherbyte/asyncredis.git
