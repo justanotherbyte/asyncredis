@@ -6,11 +6,6 @@
 Welcome to asyncredis's documentation!
 ======================================
 
-.. automodule:: asyncredis
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -37,6 +32,12 @@ Getting started with ``asyncredis`` is super easy! Here's some boiler-plate code
 .. code-block:: shell
 
    >>> world
+
+
+.. automodule:: asyncredis
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 Indices and tables
